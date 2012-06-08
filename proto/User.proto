@@ -1,0 +1,19 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: glukki
+ * Date: 08.05.12
+ * Time: 23:07
+ * To change this template use File | Settings | File Templates.
+ */
+
+import "Backpack.proto";
+option java_package = "com.kloomba.app.protobuf";
+option java_outer_classname = "UserProto";
+
+message User {
+    optional int32 timestamp = 1;
+    optional string name = 2;
+    optional int32 avatar = 3; //avatar id
+    optional int32 level = 4;
+    optional int32 experience = 5;
+}

@@ -1,0 +1,18 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: glukki
+ * Date: 01.05.12
+ * Time: 21:48
+ * To change this template use File | Settings | File Templates.
+ */
+
+option java_package = "com.kloomba.app.protobuf";
+option java_outer_classname = "FlowerbedProto";
+
+message Flowerbed {
+    optional int32 timestamp = 1;
+    optional int32 latitude = 2;
+    optional int32 longitude = 3;
+    optional string owner = 4;
+    optional int32 plants = 5;
+}

@@ -1,0 +1,12 @@
+#Idea
+*.iml
+*.ipr
+*.iws
+.idea/
+
+#Python
+*.py[cod]
+
+#Custom
+geomodel/
+tpl/

@@ -1,0 +1,20 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: glukki
+ * Date: 08.05.12
+ * Time: 23:01
+ * To change this template use File | Settings | File Templates.
+ */
+
+option java_package = "com.kloomba.app.protobuf";
+option java_outer_classname = "BackpackProto";
+
+message Backpack {
+    optional int32 timestamp = 1;
+    repeated BackpackItem item = 2;
+}
+
+message BackpackItem {
+    optional string name = 1; //latin unique name
+    optional int32 amount = 2; //amount in a backpack
+}

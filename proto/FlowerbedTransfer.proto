@@ -1,0 +1,19 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: glukki
+ * Date: 01.05.12
+ * Time: 21:42
+ * To change this template use File | Settings | File Templates.
+ */
+
+import "Backpack.proto";
+import "Flowerbed.proto";
+option java_package = "com.kloomba.app.protobuf";
+option java_outer_classname = "FlowerbedTransferProto";
+
+//request: /flowerbed/transfer?id=1&amount=1&direction=to
+message FlowerbedTransfer {
+    optional int32 timestamp = 1;
+    optional Backpack backpack = 2; //updated backpack
+    optional Flowerbed flowerbed = 3; //updated flowerbed
+}

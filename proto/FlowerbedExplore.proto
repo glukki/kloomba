@@ -1,0 +1,17 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: glukki
+ * Date: 01.05.12
+ * Time: 21:42
+ * To change this template use File | Settings | File Templates.
+ */
+
+import "Flowerbed.proto";
+option java_package = "com.kloomba.app.protobuf";
+option java_outer_classname = "FlowerbedExploreProto";
+
+//request: /flowerbed/explore?lat=59955835&lon=30328488
+message FlowerbedExplore {
+    optional int32 timestamp = 1;
+    repeated Flowerbed flowerbed = 2;
+}
