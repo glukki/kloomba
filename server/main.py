@@ -4,7 +4,7 @@ import webapp2
 from webapp2_extras import routes
 from google.appengine.api import users
 
-__author__ = 'glukki'
+__author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 DEBUG = True if 'Development' in os.environ.get('SERVER_SOFTWARE', '') else False
 

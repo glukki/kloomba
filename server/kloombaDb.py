@@ -1,5 +1,5 @@
 # coding=utf-8
-__author__ = 'glukki'
+__author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 from google.appengine.ext import db
 
@@ -45,11 +45,12 @@ class Bookmark(db.Model):
     flowerbed = db.ReferenceProperty(reference_class=Flowerbed)
     timestamp = db.DateTimeProperty()
 
-#ancestor: user
+#ancestor: "rule"
 #tick, plantPerTick, lostFlowerbedTimeout
 class Rule(db.Model):
     name = db.StringProperty()
     value = db.IntegerProperty()
+    timestamp = db.DateTimeProperty(auto_now=True)
 
 class Item(db.Model):
     id = db.StringProperty()

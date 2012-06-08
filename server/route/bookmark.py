@@ -4,7 +4,7 @@ from message.BookmarkAdd_pb2 import BookmarkAdd
 from message.BookmarkList_pb2 import BookmarkList
 from message.BookmarkRemove_pb2 import BookmarkRemove
 
-__author__ = 'glukki'
+__author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 class BookmarkListHandler(ProtobufHandler):
     """

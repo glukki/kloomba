@@ -5,7 +5,7 @@ from main import ProtobufHandler, DEBUG
 import kloombaDb
 from message.Login_pb2 import Login
 
-__author__ = 'glukki'
+__author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 class LoginHandler(ProtobufHandler):
     """

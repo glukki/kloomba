@@ -4,7 +4,7 @@ from message.FlowerbedAdd_pb2 import FlowerbedAdd
 from message.FlowerbedExplore_pb2 import FlowerbedExplore
 from message.FlowerbedTransfer_pb2 import FlowerbedTransfer
 
-__author__ = 'glukki'
+__author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 class FlowerbedExploreHandler(ProtobufHandler):
     """

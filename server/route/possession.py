@@ -3,7 +3,7 @@ from main import ProtobufHandler, DEBUG
 from message.PossessionList_pb2 import PossessionList
 from message.PossessionLost_pb2 import PossessionLost
 
-__author__ = 'glukki'
+__author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 class PossessionListHandler(ProtobufHandler):
     """
