@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-option java_package = "com.kloomba.app.protobuf";
+option java_package = "com.kloomba.app.api.protobuf";
 option java_outer_classname = "BackpackProto";
 
 message Backpack {

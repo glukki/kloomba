@@ -7,7 +7,7 @@
  */
 
 import "Flowerbed.proto";
-option java_package = "com.kloomba.app.protobuf";
+option java_package = "com.kloomba.app.api.protobuf";
 option java_outer_classname = "BookmarkAddProto";
 
 //request: /bookmark/add?id=1
