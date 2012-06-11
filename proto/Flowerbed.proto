@@ -11,8 +11,9 @@ option java_outer_classname = "FlowerbedProto";
 
 message Flowerbed {
     optional int32 timestamp = 1;
-    optional int32 latitude = 2;
-    optional int32 longitude = 3;
-    optional string owner = 4;
-    optional int32 plants = 5;
+    optional string id = 2;
+    optional int32 latitude = 3;
+    optional int32 longitude = 4;
+    optional string owner = 5;
+    optional int32 flowers = 6;
 }
