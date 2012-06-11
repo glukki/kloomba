@@ -7,6 +7,11 @@ from google.appengine.api import users
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 DEBUG = True if 'Development' in os.environ.get('SERVER_SOFTWARE', '') else False
+SALT = 'kloo'
+GEO_RESOLUTION = 17
+TICK = 60
+FLOWERS_PER_TICK = 10
+LOST_FLOWERBED_TIMEOUT = 7 * 24 * 60 * 60
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
