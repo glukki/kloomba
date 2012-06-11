@@ -13,7 +13,6 @@ from message.FlowerbedTransfer_pb2 import FlowerbedTransfer
 
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
-#noinspection PyUnresolvedReferences
 class FlowerbedExploreHandler(ProtobufHandler):
     """
     ancestor: tile
@@ -51,7 +50,6 @@ class FlowerbedExploreHandler(ProtobufHandler):
             self.response.out.write(r.SerializeToString())
 
 
-#noinspection PyUnresolvedReferences
 class FlowerbedAddHandler(ProtobufHandler):
     """
     ancestor: tile
@@ -116,7 +114,6 @@ class FlowerbedAddHandler(ProtobufHandler):
             self.response.out.write(r.SerializeToString())
 
 
-#noinspection PyUnresolvedReferences
 class FlowerbedTransferHandler(ProtobufHandler):
     """
     ancestor: tile
