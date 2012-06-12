@@ -13,5 +13,5 @@ option java_outer_classname = "BookmarkRemoveProto";
 //request: /bookmark/remove?id=1
 message BookmarkRemove {
     optional int32 timestamp = 1;
-    optional string result = 2;
+    optional string id = 2;
 }
