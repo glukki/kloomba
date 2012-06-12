@@ -37,7 +37,7 @@ class PossessionListHandler(ProtobufHandler):
             fb.owner = i.owner_public_id
             fb.flowers = i.flowers
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())
@@ -77,7 +77,7 @@ class PossessionLostHandler(ProtobufHandler):
 
         deleted.get_result()
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())

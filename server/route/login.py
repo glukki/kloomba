@@ -75,7 +75,7 @@ class LoginHandler(ProtobufHandler):
             rule.name = 'FLOWERS_PER_TICK'
             rule.value = str(FLOWERS_PER_TICK)
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())

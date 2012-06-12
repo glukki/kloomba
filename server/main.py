@@ -7,8 +7,9 @@ from google.appengine.api import users
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
 DEBUG = True if 'Development' in os.environ.get('SERVER_SOFTWARE', '') else False
+DEBUG = True
 SALT = 'kloo'
-GEO_RESOLUTION = 17
+GEO_RESOLUTION = 8
 TICK = 60
 FLOWERS_PER_TICK = 10
 LOST_FLOWERBED_TIMEOUT = 7 * 24 * 60 * 60
@@ -28,7 +29,7 @@ class MainHandler(webapp2.RequestHandler):
 class ProtobufHandler(webapp2.RequestHandler):
     def __init__(self, request=None, response=None):
         webapp2.RequestHandler.__init__(self, request, response)
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.headers['Content-type'] = 'text/plain'
         else:
             self.response.headers['Content-type'] = 'binary/octet-stream'
