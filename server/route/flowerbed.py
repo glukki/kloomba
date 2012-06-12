@@ -187,7 +187,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         lost.lost = True
                         lost.put()
                         #set flowerbed
-                        flowerbed.flowers = fb_flowers - amount
+                        flowerbed.flowers = amount - fb_flowers
                         flowerbed.owner = user.user_id()
                         flowerbed.owner_public_id = gamer_hash
                         flowerbed.put()
