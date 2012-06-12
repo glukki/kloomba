@@ -2,6 +2,7 @@
 import hashlib
 from math import floor
 import time
+from google.appengine.ext import db
 from google.appengine.ext.db import Key, GeoPt
 from geo import geocell
 from google.appengine.api import users
@@ -72,8 +73,8 @@ class FlowerbedAddHandler(ProtobufHandler):
         if self.request.get('lat') and self.request.get('lon'):
             #TODO: check if flowerbed is far enough from others
             #TODO: check if flowerbed is close enough to user
-            lat = float(self.request.get('lat')) / 1000000
-            lon = float(self.request.get('lon')) / 1000000
+            lat = int(self.request.get('lat')) / 1000000.0
+            lon = int(self.request.get('lon')) / 1000000.0
             gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
             gamer_hash = hashlib.md5(user.user_id() + SALT).hexdigest()
             r.timestamp = int(time.time())
@@ -83,6 +84,7 @@ class FlowerbedAddHandler(ProtobufHandler):
                 #lower backpack
                 bp_beds.amount -= 1
                 bp_beds.put()
+                backpack = kloombaDb.Backpack.all().ancestor(gamer_key).run()
 
                 #add flowerbed
                 point = GeoPt(lat, lon)
@@ -92,12 +94,11 @@ class FlowerbedAddHandler(ProtobufHandler):
                 flowerbed.tile = cell
                 flowerbed.owner = user.user_id()
                 flowerbed.owner_public_id = gamer_hash
-                flowerbed.put()
+                flowerbed_future = db.put_async(flowerbed)
+                #add possession
                 possession = kloombaDb.Possession(parent=gamer_key)
                 possession.flowerbed = flowerbed
-                possession.put()
-
-                backpack = kloombaDb.Backpack.all().ancestor(gamer_key)
+                possession_future = db.put_async(possession)
 
                 #set timestamps
                 r.flowerbed.timestamp = int(time.time())
@@ -116,6 +117,8 @@ class FlowerbedAddHandler(ProtobufHandler):
                     bp.name = i.name
                     bp.amount = i.amount
 
+                flowerbed_future.get_result()
+                possession_future.get_result()
 
         if self.request.get('debug', False):
             self.response.out.write(r)
