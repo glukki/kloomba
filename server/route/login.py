@@ -3,7 +3,7 @@ import time
 import hashlib
 from google.appengine.api import users
 from google.appengine.ext.db import Key
-from main import ProtobufHandler, DEBUG, SALT, TICK, FLOWERS_PER_TICK, ACTION_DISTANCE
+from main import ProtobufHandler, SALT, TICK, FLOWERS_PER_TICK, ACTION_DISTANCE, OBJECT_DISTANCE
 import kloombaDb
 from message.Login_pb2 import Login
 
@@ -78,6 +78,9 @@ class LoginHandler(ProtobufHandler):
             rule = r.rules.item.add()
             rule.name = 'ACTION_DISTANCE'
             rule.value = str(ACTION_DISTANCE)
+            rule = r.rules.item.add()
+            rule.name = 'OBJECT_DISTANCE'
+            rule.value = str(OBJECT_DISTANCE)
 
         if self.request.get('debug', False):
             self.response.out.write(r)

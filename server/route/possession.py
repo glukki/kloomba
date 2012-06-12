@@ -4,7 +4,7 @@ from google.appengine.ext import db
 from google.appengine.ext.db import Key
 import time
 import kloombaDb
-from main import ProtobufHandler, DEBUG, LOST_FLOWERBED_TIMEOUT
+from main import ProtobufHandler, LOST_FLOWERBED_TIMEOUT
 from message.PossessionList_pb2 import PossessionList
 from message.PossessionLost_pb2 import PossessionLost
 

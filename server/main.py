@@ -15,6 +15,7 @@ FLOWERS_PER_TICK = 10
 LOST_FLOWERBED_TIMEOUT = 7 * 24 * 60 * 60
 ACTION_DISTANCE = int((180.0 + 360.0) / (pow(16, GEO_RESOLUTION) * 2 * 2))
 ACTION_DISTANCE = 100
+OBJECT_DISTANCE = 50
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):

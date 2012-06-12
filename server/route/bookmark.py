@@ -3,7 +3,7 @@ import time
 from google.appengine.api import users
 from google.appengine.ext.db import Key
 import kloombaDb
-from main import ProtobufHandler, DEBUG
+from main import ProtobufHandler
 from message.BookmarkAdd_pb2 import BookmarkAdd
 from message.BookmarkList_pb2 import BookmarkList
 from message.BookmarkRemove_pb2 import BookmarkRemove

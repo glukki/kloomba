@@ -5,7 +5,7 @@ import time
 from google.appengine.ext.db import Key, GeoPt
 from geo import geocell
 from google.appengine.api import users
-from main import ProtobufHandler, DEBUG, SALT, TICK, FLOWERS_PER_TICK, GEO_RESOLUTION
+from main import ProtobufHandler, SALT, TICK, FLOWERS_PER_TICK, GEO_RESOLUTION
 import kloombaDb
 from message.FlowerbedAdd_pb2 import FlowerbedAdd
 from message.FlowerbedExplore_pb2 import FlowerbedExplore
@@ -195,7 +195,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         #set conquer
                         possession = kloombaDb.Possession.all().ancestor(gamer_key).filter('flowerbed =', flowerbed).get()
                         if not possession:
-                            possession = kloombaDb.Possession()
+                            possession = kloombaDb.Possession(parent=gamer_key)
                             possession.flowerbed = flowerbed
                         possession.lost = False
                         possession.put()
