@@ -2,7 +2,6 @@
 import hashlib
 from math import floor
 import time
-from google.appengine.ext import db
 from google.appengine.ext.db import Key, GeoPt
 from geo import geocell
 from google.appengine.api import users
@@ -84,7 +83,6 @@ class FlowerbedAddHandler(ProtobufHandler):
                 #lower backpack
                 bp_beds.amount -= 1
                 bp_beds.put()
-                backpack = kloombaDb.Backpack.all().ancestor(gamer_key).run()
 
                 #add flowerbed
                 point = GeoPt(lat, lon)
@@ -94,11 +92,12 @@ class FlowerbedAddHandler(ProtobufHandler):
                 flowerbed.tile = cell
                 flowerbed.owner = user.user_id()
                 flowerbed.owner_public_id = gamer_hash
-                flowerbed_future = db.put_async(flowerbed)
-                #add possession
+                flowerbed.put()
                 possession = kloombaDb.Possession(parent=gamer_key)
                 possession.flowerbed = flowerbed
-                possession_future = db.put_async(possession)
+                possession.put()
+
+                backpack = kloombaDb.Backpack.all().ancestor(gamer_key).run()
 
                 #set timestamps
                 r.flowerbed.timestamp = int(time.time())
@@ -117,8 +116,6 @@ class FlowerbedAddHandler(ProtobufHandler):
                     bp.name = i.name
                     bp.amount = i.amount
 
-                flowerbed_future.get_result()
-                possession_future.get_result()
 
         if self.request.get('debug', False):
             self.response.out.write(r)
