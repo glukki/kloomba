@@ -40,7 +40,7 @@ class FlowerbedLog(db.Model):
 class Possession(db.Model):
     flowerbed = db.ReferenceProperty(reference_class=Flowerbed)
     lost = db.BooleanProperty(default=False)
-    timestamp = db.DateProperty(auto_now=True)
+    timestamp = db.DateTimeProperty(auto_now=True)
 
 #ancestor: user_id
 class Bookmark(db.Model):

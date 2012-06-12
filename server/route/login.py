@@ -3,7 +3,7 @@ import time
 import hashlib
 from google.appengine.api import users
 from google.appengine.ext.db import Key
-from main import ProtobufHandler, DEBUG, SALT, TICK, FLOWERS_PER_TICK
+from main import ProtobufHandler, DEBUG, SALT, TICK, FLOWERS_PER_TICK, ACTION_DISTANCE
 import kloombaDb
 from message.Login_pb2 import Login
 
@@ -65,7 +65,8 @@ class LoginHandler(ProtobufHandler):
 
 
         #TODO: replace with rules update timestamp
-        if int(self.request.get('ts', 0)) < 1339436729:
+        #TODO: always return rules
+        if True or int(self.request.get('ts', 0)) < 1339436729:
             #set rules
             r.rules.timestamp = 1339436729
             rule = r.rules.item.add()
@@ -74,6 +75,9 @@ class LoginHandler(ProtobufHandler):
             rule = r.rules.item.add()
             rule.name = 'FLOWERS_PER_TICK'
             rule.value = str(FLOWERS_PER_TICK)
+            rule = r.rules.item.add()
+            rule.name = 'ACTION_DISTANCE'
+            rule.value = str(ACTION_DISTANCE)
 
         if self.request.get('debug', False):
             self.response.out.write(r)

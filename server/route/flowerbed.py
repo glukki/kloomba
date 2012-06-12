@@ -75,7 +75,6 @@ class FlowerbedAddHandler(ProtobufHandler):
             lat = float(self.request.get('lat')) / 1000000
             lon = float(self.request.get('lon')) / 1000000
             gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
-            kloombaDb.Gamer.all().ancestor(gamer_key).get().put()
             gamer_hash = hashlib.md5(user.user_id() + SALT).hexdigest()
             r.timestamp = int(time.time())
             #get backpack
@@ -152,7 +151,6 @@ class FlowerbedTransferHandler(ProtobufHandler):
             gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
             gamer_hash = hashlib.md5(user.user_id() + SALT).hexdigest()
             bp_flowers = kloombaDb.Backpack.all().ancestor(gamer_key).filter('name =', 'flower').get()
-            kloombaDb.Gamer.all().ancestor(gamer_key).get().put()
 
             #TODO: check if flowerbed is close to user
             if amount < 0: #from
