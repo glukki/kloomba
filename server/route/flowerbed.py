@@ -5,7 +5,7 @@ import time
 from google.appengine.ext.db import Key, GeoPt
 from geo import geocell
 from google.appengine.api import users
-from main import ProtobufHandler, DEBUG, SALT, TICK, FLOWERS_PER_TICK
+from main import ProtobufHandler, DEBUG, SALT, TICK, FLOWERS_PER_TICK, GEO_RESOLUTION
 import kloombaDb
 from message.FlowerbedAdd_pb2 import FlowerbedAdd
 from message.FlowerbedExplore_pb2 import FlowerbedExplore
@@ -31,20 +31,30 @@ class FlowerbedExploreHandler(ProtobufHandler):
             lat = float(self.request.get('lat')) / 1000000
             lon = float(self.request.get('lon')) / 1000000
             gamer.point = GeoPt(lat, lon) #update user position
-            #TODO: take adjacent tiles
-            flowerbeds = kloombaDb.Flowerbed.all().ancestor(Key.from_path(kloombaDb.Flowerbed.kind(), geocell.compute(GeoPt(lat, lon)))).run()
-            for i in flowerbeds:
-                fb = r.flowerbed.add()
-                fb.timestamp = int(time.mktime(i.timestamp.timetuple()))
-                fb.id = str(i.key())
-                fb.latitude = int(i.point.lat * 1000000)
-                fb.longitude = int(i.point.lon * 1000000)
-                fb.owner = i.owner_public_id
-                fb.flowers = i.flowers
+            #take adjacent tiles
+            tiles = []
+            requests = []
+            tile = geocell.compute(GeoPt(lat, lon), GEO_RESOLUTION)
+            tiles.append(tile)
+            tiles.extend(geocell.all_adjacents(tile))
+            kind = kloombaDb.Flowerbed.kind()
+            #prepare async requests
+            for i in tiles:
+                request = kloombaDb.Flowerbed.all().ancestor(Key.from_path(kind, i)).run()
+                requests.append(request)
+            for i in requests:
+                for j in i:
+                    fb = r.flowerbed.add()
+                    fb.timestamp = int(time.mktime(j.timestamp.timetuple()))
+                    fb.id = str(j.key())
+                    fb.latitude = int(j.point.lat * 1000000)
+                    fb.longitude = int(j.point.lon * 1000000)
+                    fb.owner = j.owner_public_id
+                    fb.flowers = j.flowers
 
         gamer.put()
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())
@@ -77,7 +87,7 @@ class FlowerbedAddHandler(ProtobufHandler):
 
                 #add flowerbed
                 point = GeoPt(lat, lon)
-                cell = geocell.compute(point)
+                cell = geocell.compute(point, GEO_RESOLUTION)
                 flowerbed = kloombaDb.Flowerbed(parent=Key.from_path(kloombaDb.Flowerbed.kind(), cell))
                 flowerbed.point = point
                 flowerbed.tile = cell
@@ -108,7 +118,7 @@ class FlowerbedAddHandler(ProtobufHandler):
                     bp.amount = i.amount
 
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())
@@ -185,7 +195,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         bp_flowers.amount -= amount
                         bp_flowers.put()
                         #set conquer
-                        possession = kloombaDb.Possession.all().ancestor(gamer_key).filter('flowerbed =', flowerbed).run()
+                        possession = kloombaDb.Possession.all().ancestor(gamer_key).filter('flowerbed =', flowerbed).get()
                         if not possession:
                             possession = kloombaDb.Possession()
                             possession.flowerbed = flowerbed
@@ -211,7 +221,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                 bp.name = i.name
                 bp.amount = i.amount
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())
