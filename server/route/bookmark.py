@@ -38,7 +38,7 @@ class BookmarkListHandler(ProtobufHandler):
             fb.flowers = i.flowers
 
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())
@@ -75,7 +75,7 @@ class BookmarkAddHandler(ProtobufHandler):
         bookmark.put()
 
         r.timestamp = int(time.time())
-        fb = r.flowerbed.add()
+        fb = r.flowerbed
         fb.timestamp = int(time.mktime(flowerbed.timestamp.timetuple()))
         fb.id = str(flowerbed.key())
         fb.latitude = int(flowerbed.point.lat * 1000000)
@@ -83,7 +83,7 @@ class BookmarkAddHandler(ProtobufHandler):
         fb.owner = flowerbed.owner_public_id
         fb.flowers = flowerbed.flowers
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())
@@ -119,9 +119,9 @@ class BookmarkRemoveHandler(ProtobufHandler):
         bookmark.delete()
 
         r.timestamp = int(time.time())
-        r.result = 'ok'
+        r.id = fb_key
 
-        if DEBUG:
+        if self.request.get('debug', False):
             self.response.out.write(r)
         else:
             self.response.out.write(r.SerializeToString())
