@@ -66,9 +66,9 @@ class LoginHandler(ProtobufHandler):
 
         #TODO: replace with rules update timestamp
         #TODO: always return rules
-        if True or int(self.request.get('ts', 0)) < 1339436729:
+        if True or int(self.request.get('ts', 0)) < 1339610761:
             #set rules
-            r.rules.timestamp = 1339436729
+            r.rules.timestamp = 1339610761
             rule = r.rules.item.add()
             rule.name = 'TICK'
             rule.value = str(TICK)

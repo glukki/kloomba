@@ -27,15 +27,17 @@ class PossessionListHandler(ProtobufHandler):
         for i in possessions:
             keys.append(i.flowerbed.key())
 
-        flowerbeds = kloombaDb.Flowerbed.get(keys) if keys else []
-        for i in flowerbeds:
-            fb = r.flowerbed.add()
-            fb.timestamp = int(time.mktime(i.timestamp.timetuple()))
-            fb.id = str(i.key())
-            fb.latitude = int(i.point.lat * 1000000)
-            fb.longitude = int(i.point.lon * 1000000)
-            fb.owner = i.owner_public_id
-            fb.flowers = i.flowers
+        if keys:
+            flowerbeds = kloombaDb.Flowerbed.get(keys)
+            for (p, f) in zip(possessions, flowerbeds):
+                fb = r.possession.add()
+                fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
+                fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
+                fb.flowerbed.id = str(f.key())
+                fb.flowerbed.latitude = int(f.point.lat * 1000000)
+                fb.flowerbed.longitude = int(f.point.lon * 1000000)
+                fb.flowerbed.owner = f.owner_public_id
+                fb.flowerbed.flowers = f.flowers
 
         if self.request.get('debug', False):
             self.response.out.write(r)
@@ -65,15 +67,17 @@ class PossessionLostHandler(ProtobufHandler):
 
         deleted = db.delete_async(to_delete)
 
-        flowerbeds = kloombaDb.Flowerbed.get(keys) if keys else []
-        for i in flowerbeds:
-            fb = r.flowerbed.add()
-            fb.timestamp = int(time.mktime(i.timestamp.timetuple()))
-            fb.id = str(i.key())
-            fb.latitude = int(i.point.lat * 1000000)
-            fb.longitude = int(i.point.lon * 1000000)
-            fb.owner = i.owner_public_id
-            fb.flowers = i.flowers
+        if keys:
+            flowerbeds = kloombaDb.Flowerbed.get(keys)
+            for (p, f) in zip(possessions, flowerbeds):
+                fb = r.possession.add()
+                fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
+                fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
+                fb.flowerbed.id = str(f.key())
+                fb.flowerbed.latitude = int(f.point.lat * 1000000)
+                fb.flowerbed.longitude = int(f.point.lon * 1000000)
+                fb.flowerbed.owner = f.owner_public_id
+                fb.flowerbed.flowers = f.flowers
 
         deleted.get_result()
 

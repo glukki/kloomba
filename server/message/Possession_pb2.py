@@ -6,34 +6,34 @@ from google.net.proto2.python.public import reflection
 # @@protoc_insertion_point(imports)
 
 
-import Possession_pb2
+import Flowerbed_pb2
 
 DESCRIPTOR = descriptor.FileDescriptor(
-  name='PossessionLost.proto',
+  name='Possession.proto',
   package='',
-  serialized_pb='\n\x14PossessionLost.proto\x1a\x10Possession.proto\"D\n\x0ePossessionLost\x12\x11\n\ttimestamp\x18\x01 \x01(\x05\x12\x1f\n\npossession\x18\x02 \x03(\x0b\x32\x0b.PossessionB3\n\x1c\x63om.kloomba.app.api.protobufB\x13PossessionLostProto')
+  serialized_pb='\n\x10Possession.proto\x1a\x0f\x46lowerbed.proto\">\n\nPossession\x12\x11\n\ttimestamp\x18\x01 \x01(\x05\x12\x1d\n\tflowerbed\x18\x02 \x01(\x0b\x32\n.FlowerbedB/\n\x1c\x63om.kloomba.app.api.protobufB\x0fPossessionProto')
 
 
 
 
-_POSSESSIONLOST = descriptor.Descriptor(
-  name='PossessionLost',
-  full_name='PossessionLost',
+_POSSESSION = descriptor.Descriptor(
+  name='Possession',
+  full_name='Possession',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     descriptor.FieldDescriptor(
-      name='timestamp', full_name='PossessionLost.timestamp', index=0,
+      name='timestamp', full_name='Possession.timestamp', index=0,
       number=1, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='possession', full_name='PossessionLost.possession', index=1,
-      number=2, type=11, cpp_type=10, label=3,
-      has_default_value=False, default_value=[],
+      name='flowerbed', full_name='Possession.flowerbed', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
@@ -46,17 +46,17 @@ _POSSESSIONLOST = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=42,
-  serialized_end=110,
+  serialized_start=37,
+  serialized_end=99,
 )
 
-_POSSESSIONLOST.fields_by_name['possession'].message_type = Possession_pb2._POSSESSION
-DESCRIPTOR.message_types_by_name['PossessionLost'] = _POSSESSIONLOST
+_POSSESSION.fields_by_name['flowerbed'].message_type = Flowerbed_pb2._FLOWERBED
+DESCRIPTOR.message_types_by_name['Possession'] = _POSSESSION
 
-class PossessionLost(message.Message):
+class Possession(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
-  DESCRIPTOR = _POSSESSIONLOST
+  DESCRIPTOR = _POSSESSION
   
-  # @@protoc_insertion_point(class_scope:PossessionLost)
+  # @@protoc_insertion_point(class_scope:Possession)
 
 # @@protoc_insertion_point(module_scope)
