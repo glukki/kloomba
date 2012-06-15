@@ -1,0 +1,16 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com
+ * Date: 6/15/12
+ * Time: 3:42 PM
+ * To change this template use File | Settings | File Templates.
+ */
+
+import "Flowerbed.proto";
+option java_package = "com.kloomba.app.api.protobuf";
+option java_outer_classname = "PossessionProto";
+
+message Possession{
+    optional int32 timestamp = 1;
+    optional Flowerbed flowerbed = 2;
+}

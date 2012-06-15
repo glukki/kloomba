@@ -6,12 +6,12 @@
  * To change this template use File | Settings | File Templates.
  */
 
-import "Flowerbed.proto";
+import "Possession.proto";
 option java_package = "com.kloomba.app.api.protobuf";
 option java_outer_classname = "PossessionListProto";
 
 //request: /possession/list
 message PossessionList {
     optional int32 timestamp = 1;
-    repeated Flowerbed flowerbed = 2;
+    repeated Possession possession = 2;
 }
