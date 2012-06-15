@@ -18,18 +18,18 @@ class PossessionListHandler(ProtobufHandler):
     """
     def get(self):
         r = PossessionList()
-        keys = []
+        poss = []
 
         user = users.get_current_user()
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
         possessions = kloombaDb.Possession.all().ancestor(gamer_key).filter('lost =', False).run()
         r.timestamp = int(time.time())
         for i in possessions:
-            keys.append(i.flowerbed.key())
+            poss.append(i)
 
-        if keys:
-            flowerbeds = kloombaDb.Flowerbed.get(keys)
-            for (p, f) in zip(possessions, flowerbeds):
+        if poss:
+            flowerbeds = kloombaDb.Flowerbed.get([i.flowerbed.key() for i in poss])
+            for (p, f) in zip(poss, flowerbeds):
                 fb = r.possession.add()
                 fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
                 fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
@@ -53,7 +53,7 @@ class PossessionLostHandler(ProtobufHandler):
     def get(self):
         r = PossessionLost()
         to_delete = []
-        keys = []
+        poss = []
 
         user = users.get_current_user()
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
@@ -63,13 +63,13 @@ class PossessionLostHandler(ProtobufHandler):
             if int(time.time()) - int(time.mktime(i.timestamp.timetuple())) > LOST_FLOWERBED_TIMEOUT:
                 to_delete.append(i.flowerbed.key())
             else:
-                keys.append(i.flowerbed.key())
+                poss.append(i)
 
         deleted = db.delete_async(to_delete)
 
-        if keys:
-            flowerbeds = kloombaDb.Flowerbed.get(keys)
-            for (p, f) in zip(possessions, flowerbeds):
+        if poss:
+            flowerbeds = kloombaDb.Flowerbed.get([i.flowerbed.key() for i in poss])
+            for (p, f) in zip(poss, flowerbeds):
                 fb = r.possession.add()
                 fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
                 fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
