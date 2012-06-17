@@ -3,7 +3,7 @@ import time
 import hashlib
 from google.appengine.api import users
 from google.appengine.ext.db import Key
-from main import ProtobufHandler, SALT, TICK, FLOWERS_PER_TICK, ACTION_DISTANCE, OBJECT_DISTANCE
+from main import ProtobufHandler, SALT, TICK, FLOWERS_PER_TICK, ACTION_DISTANCE, OBJECT_DISTANCE, MAP_ZOOM_LEVEL
 import kloombaDb
 from message.Login_pb2 import Login
 
@@ -81,6 +81,9 @@ class LoginHandler(ProtobufHandler):
             rule = r.rules.item.add()
             rule.name = 'OBJECT_DISTANCE'
             rule.value = str(OBJECT_DISTANCE)
+            rule = r.rules.item.add()
+            rule.name = 'MAP_ZOOM_LEVEL'
+            rule.value = str(MAP_ZOOM_LEVEL)
 
         if self.request.get('debug', False):
             self.response.out.write(r)
