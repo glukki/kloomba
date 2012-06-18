@@ -11,6 +11,10 @@ handlers:
   script: main.app
   login: required
 
+- url: /favicon\.ico
+  static_files: img/favicon.ico
+  upload: img/favicon.ico
+
 - url: /.*
   script: main.app
 
