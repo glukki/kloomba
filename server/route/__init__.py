@@ -1,1 +1,1 @@
-__author__ = 'glukki'
+__author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
