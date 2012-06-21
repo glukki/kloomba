@@ -1,5 +1,7 @@
 # coding=utf-8
+import logging
 from google.appengine.api import users
+from google.appengine.api import memcache
 from google.appengine.ext import db
 from google.appengine.ext.db import Key, GqlQuery
 import time
@@ -9,6 +11,8 @@ from message.PossessionList_pb2 import PossessionList
 from message.PossessionLost_pb2 import PossessionLost
 
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
+
+mem = memcache.Client()
 
 class PossessionListHandler(ProtobufHandler):
     """
@@ -28,8 +32,17 @@ class PossessionListHandler(ProtobufHandler):
             poss.append(i)
 
         if poss:
-            flowerbeds = kloombaDb.Flowerbed.get(
-                [kloombaDb.Possession.flowerbed.get_value_for_datastore(i) for i in poss])
+            keys = [kloombaDb.Possession.flowerbed.get_value_for_datastore(i) for i in poss]
+            flowerbeds = []
+            for i in keys:
+                fb = mem.get(str(i))
+                if not fb:
+                    fb = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', i).get()
+                    if fb and not mem.add(str(i), fb):
+                        logging.error('Memcache set failed')
+                if fb:
+                    flowerbeds.append(fb)
+
             for (p, f) in zip(poss, flowerbeds):
                 if p and f:
                     fb = r.possession.add()
@@ -70,8 +83,18 @@ class PossessionLostHandler(ProtobufHandler):
         deleted = db.delete_async(to_delete)
 
         if poss:
-            flowerbeds = kloombaDb.Flowerbed.get(
-                [kloombaDb.Possession.flowerbed.get_value_for_datastore(i) for i in poss])
+            keys = [kloombaDb.Possession.flowerbed.get_value_for_datastore(i) for i in poss]
+            flowerbeds = []
+
+            for i in keys:
+                fb = mem.get(str(i))
+                if not fb:
+                    fb = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', i).get()
+                    if fb and not mem.add(str(i), fb):
+                        logging.error('Memcache set failed')
+                if fb:
+                    flowerbeds.append(fb)
+
             for (p, f) in zip(poss, flowerbeds):
                 if p and f:
                     fb = r.possession.add()
