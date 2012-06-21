@@ -64,7 +64,7 @@ class Item(db.Model):
 #ancestor: user_id
 class Backpack(db.Model):
     owner = db.StringProperty(indexed=False)
-    name = db.StringProperty(indexed=False) #Item.name
+    name = db.StringProperty() #Item.name
     amount = db.IntegerProperty(indexed=False)
     timestamp = db.DateTimeProperty(indexed=False, auto_now=True)
 

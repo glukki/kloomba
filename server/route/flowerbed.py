@@ -4,7 +4,7 @@ from math import floor
 import time
 from google.appengine.ext.db import Key, GeoPt, GqlQuery
 from geo import geocell
-from google.appengine.api import users
+from google.appengine.api import users, memcache
 from main import ProtobufHandler, SALT, RULES
 import kloombaDb
 from message.FlowerbedAdd_pb2 import FlowerbedAdd
@@ -12,6 +12,8 @@ from message.FlowerbedExplore_pb2 import FlowerbedExplore
 from message.FlowerbedTransfer_pb2 import FlowerbedTransfer
 
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
+
+mem = memcache.Client()
 
 class FlowerbedExploreHandler(ProtobufHandler):
     """
@@ -37,6 +39,7 @@ class FlowerbedExploreHandler(ProtobufHandler):
             tile = geocell.compute(GeoPt(lat, lon), RULES['GEO_RESOLUTION'])
             tiles.append(tile)
             tiles.extend(geocell.all_adjacents(tile))
+
             kind = kloombaDb.Flowerbed.kind()
             #prepare async requests
             for i in tiles:
@@ -93,6 +96,11 @@ class FlowerbedAddHandler(ProtobufHandler):
                 flowerbed.owner = user.user_id()
                 flowerbed.owner_public_id = gamer_hash
                 flowerbed.put()
+
+                #save to memcache
+                mem.set(str(flowerbed.key()), flowerbed)
+
+                #add possession
                 possession = kloombaDb.Possession(parent=gamer_key)
                 possession.flowerbed = flowerbed
                 possession.put()
@@ -138,8 +146,11 @@ class FlowerbedTransferHandler(ProtobufHandler):
         fb_id = self.request.get('id')
         amount = int(self.request.get('amount'))
 
+        #get from memcache
+        flowerbed = mem.get(fb_id)
+        if not flowerbed:
+            flowerbed = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', fb_id).get()
 
-        flowerbed = GqlQuery('SELECT * FROM Flowerbed WHERE ANCESTOR IS :1', fb_id).get()
         ts = time.time()
         if flowerbed:
             fb_flowers = flowerbed.flowers +\
@@ -161,6 +172,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                 #ok, now substract
                 flowerbed.flowers = fb_flowers + amount
                 flowerbed.put()
+                mem.set(str(flowerbed.key()), flowerbed)
                 bp_flowers.amount -= amount
                 bp_flowers.put()
             else: #to
@@ -170,6 +182,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                     #ok, it's mine
                     flowerbed.flowers = fb_flowers + amount
                     flowerbed.put()
+                    mem.set(str(flowerbed.key()), flowerbed)
                     bp_flowers.amount -= amount
                     bp_flowers.put()
                 else: #ok, attack
@@ -177,6 +190,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         #still the same owner
                         flowerbed.flowers = fb_flowers - amount
                         flowerbed.put()
+                        mem.set(str(flowerbed.key()), flowerbed)
                         bp_flowers.amount -= amount
                         bp_flowers.put()
                     else: #conquer
@@ -189,6 +203,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         flowerbed.owner = user.user_id()
                         flowerbed.owner_public_id = gamer_hash
                         flowerbed.put()
+                        mem.set(str(flowerbed.key()), flowerbed)
                         #set backpack
                         bp_flowers.amount -= amount
                         bp_flowers.put()

@@ -65,4 +65,5 @@ app = webapp2.WSGIApplication(
             webapp2.Route('/add', 'route.bookmark.BookmarkAddHandler'),
             webapp2.Route('/remove', 'route.bookmark.BookmarkRemoveHandler'),
         ]),
+        webapp2.Route('/update/<table:[^?]+>', 'admin.update.UpdateHandler'),
     ],debug=DEBUG)

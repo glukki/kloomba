@@ -18,6 +18,10 @@ handlers:
 - url: /img
   static_dir: img
 
+- url: /update/(Gamer|Flowerbed|FlowerbedLog|Possession|Bookmark|Rule|Item|Backpack).*
+  script: main.app
+  login: admin
+
 - url: /.*
   script: main.app
 
