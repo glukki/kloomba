@@ -5,7 +5,7 @@ import time
 from google.appengine.ext.db import Key, GeoPt, GqlQuery
 from geo import geocell
 from google.appengine.api import users
-from main import ProtobufHandler, SALT, TICK, FLOWERS_PER_TICK, GEO_RESOLUTION
+from main import ProtobufHandler, SALT, RULES
 import kloombaDb
 from message.FlowerbedAdd_pb2 import FlowerbedAdd
 from message.FlowerbedExplore_pb2 import FlowerbedExplore
@@ -34,7 +34,7 @@ class FlowerbedExploreHandler(ProtobufHandler):
             #take adjacent tiles
             tiles = []
             requests = []
-            tile = geocell.compute(GeoPt(lat, lon), GEO_RESOLUTION)
+            tile = geocell.compute(GeoPt(lat, lon), RULES['GEO_RESOLUTION'])
             tiles.append(tile)
             tiles.extend(geocell.all_adjacents(tile))
             kind = kloombaDb.Flowerbed.kind()
@@ -86,7 +86,7 @@ class FlowerbedAddHandler(ProtobufHandler):
 
                 #add flowerbed
                 point = GeoPt(lat, lon)
-                cell = geocell.compute(point, GEO_RESOLUTION)
+                cell = geocell.compute(point, RULES['GEO_RESOLUTION'])
                 flowerbed = kloombaDb.Flowerbed(parent=Key.from_path(kloombaDb.Flowerbed.kind(), cell))
                 flowerbed.point = point
                 flowerbed.tile = cell
@@ -144,8 +144,8 @@ class FlowerbedTransferHandler(ProtobufHandler):
         if flowerbed:
             fb_flowers = flowerbed.flowers +\
                          int(floor(
-                             (ts - time.mktime(flowerbed.timestamp.timetuple())) / TICK *\
-                             FLOWERS_PER_TICK
+                             (ts - time.mktime(flowerbed.timestamp.timetuple())) / RULES['TICK'] *\
+                             RULES['FLOWERS_PER_TICK']
                          ))
             user = users.get_current_user()
             gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())

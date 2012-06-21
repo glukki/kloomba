@@ -1,7 +1,7 @@
 # coding=utf-8
 import time
 from google.appengine.api import users
-from google.appengine.ext.db import Key
+from google.appengine.ext.db import Key, GqlQuery
 import kloombaDb
 from main import ProtobufHandler
 from message.BookmarkAdd_pb2 import BookmarkAdd
@@ -22,7 +22,7 @@ class BookmarkListHandler(ProtobufHandler):
 
         user = users.get_current_user()
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
-        bookmarks = kloombaDb.Bookmark.all().ancestor(gamer_key).run()
+        bookmarks = GqlQuery('SELECT * FROM Bookmark WHERE ANCESTOR IS :1', gamer_key).run()
         r.timestamp = int(time.time())
         for i in bookmarks:
             keys.append(i.flowerbed.key())
@@ -61,11 +61,11 @@ class BookmarkAddHandler(ProtobufHandler):
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
 
         #get flowerbed
-        flowerbed = kloombaDb.Flowerbed.get(fb_key)
+        flowerbed = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', fb_key).get()
         if not flowerbed:
             return #no such flowerbed
         #check bookmark
-        bookmark = kloombaDb.Bookmark.all().ancestor(gamer_key).filter('flowerbed =', Key(fb_key)).get()
+        bookmark = GqlQuery('SELECT * FROM Bookmark WHERE ANCESTOR IS :1 AND flowerbed=:2', gamer_key, Key(fb_key)).get()
         if bookmark:
             return #bookmark allready exist
 
@@ -106,12 +106,7 @@ class BookmarkRemoveHandler(ProtobufHandler):
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
 
         #get bookmark
-        bookmarks = kloombaDb.Bookmark.all().ancestor(gamer_key).run()
-        bookmark = None
-        for i in bookmarks:
-            if str(i.flowerbed.key()) == fb_key:
-                bookmark = i
-                break
+        bookmark = GqlQuery('SELECT * FROM Bookmark WHERE ANCESTOR IS :1 AND flowerbed=:2', gamer_key, Key(fb_key)).get()
 
         if not bookmark:
             return

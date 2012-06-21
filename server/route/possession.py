@@ -4,7 +4,7 @@ from google.appengine.ext import db
 from google.appengine.ext.db import Key, GqlQuery
 import time
 import kloombaDb
-from main import ProtobufHandler, LOST_FLOWERBED_TIMEOUT
+from main import ProtobufHandler, RULES
 from message.PossessionList_pb2 import PossessionList
 from message.PossessionLost_pb2 import PossessionLost
 
@@ -62,7 +62,7 @@ class PossessionLostHandler(ProtobufHandler):
         possessions = GqlQuery('SELECT * FROM Possession WHERE ANCESTOR IS :1 AND lost = TRUE', gamer_key).run()
         r.timestamp = int(time.time())
         for i in possessions:
-            if int(time.time()) - int(time.mktime(i.timestamp.timetuple())) > LOST_FLOWERBED_TIMEOUT:
+            if int(time.time()) - int(time.mktime(i.timestamp.timetuple())) > RULES['LOST_FLOWERBED_TIMEOUT']:
                 to_delete.append(i.flowerbed.key())
             else:
                 poss.append(i)

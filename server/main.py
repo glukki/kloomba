@@ -9,14 +9,15 @@ __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 DEBUG = True if 'Development' in os.environ.get('SERVER_SOFTWARE', '') else False
 DEBUG = True
 SALT = 'kloo'
-GEO_RESOLUTION = 8
-TICK = 36
-FLOWERS_PER_TICK = 1
-LOST_FLOWERBED_TIMEOUT = 7 * 24 * 60 * 60
-ACTION_DISTANCE = int((180.0 + 360.0) / (pow(16, GEO_RESOLUTION) * 2 * 2))
-ACTION_DISTANCE = 200
-OBJECT_DISTANCE = 50
-MAP_ZOOM_LEVEL = 8
+RULES = {
+    'GEO_RESOLUTION': 8,
+    'TICK': 36,
+    'FLOWERS_PER_TICK': 1,
+    'LOST_FLOWERBED_TIMEOUT': 7 * 24 * 60 * 60,
+    'ACTION_DISTANCE': 200,
+    'OBJECT_DISTANCE': 50,
+    'MAP_ZOOM_LEVEL': 8,
+}
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
