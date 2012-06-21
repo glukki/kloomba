@@ -13,7 +13,6 @@ from message.FlowerbedTransfer_pb2 import FlowerbedTransfer
 
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
-mem = memcache.Client()
 
 class FlowerbedExploreHandler(ProtobufHandler):
     """
@@ -98,7 +97,7 @@ class FlowerbedAddHandler(ProtobufHandler):
                 flowerbed.put()
 
                 #save to memcache
-                mem.set(str(flowerbed.key()), flowerbed)
+                memcache.set(str(flowerbed.key()), flowerbed)
 
                 #add possession
                 possession = kloombaDb.Possession(parent=gamer_key)
@@ -147,7 +146,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
         amount = int(self.request.get('amount'))
 
         #get from memcache
-        flowerbed = mem.get(fb_id)
+        flowerbed = memcache.get(fb_id)
         if not flowerbed:
             flowerbed = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', fb_id).get()
 
@@ -172,7 +171,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                 #ok, now substract
                 flowerbed.flowers = fb_flowers + amount
                 flowerbed.put()
-                mem.set(str(flowerbed.key()), flowerbed)
+                memcache.set(str(flowerbed.key()), flowerbed)
                 bp_flowers.amount -= amount
                 bp_flowers.put()
             else: #to
@@ -182,7 +181,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                     #ok, it's mine
                     flowerbed.flowers = fb_flowers + amount
                     flowerbed.put()
-                    mem.set(str(flowerbed.key()), flowerbed)
+                    memcache.set(str(flowerbed.key()), flowerbed)
                     bp_flowers.amount -= amount
                     bp_flowers.put()
                 else: #ok, attack
@@ -190,7 +189,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         #still the same owner
                         flowerbed.flowers = fb_flowers - amount
                         flowerbed.put()
-                        mem.set(str(flowerbed.key()), flowerbed)
+                        memcache.set(str(flowerbed.key()), flowerbed)
                         bp_flowers.amount -= amount
                         bp_flowers.put()
                     else: #conquer
@@ -203,7 +202,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         flowerbed.owner = user.user_id()
                         flowerbed.owner_public_id = gamer_hash
                         flowerbed.put()
-                        mem.set(str(flowerbed.key()), flowerbed)
+                        memcache.set(str(flowerbed.key()), flowerbed)
                         #set backpack
                         bp_flowers.amount -= amount
                         bp_flowers.put()

@@ -6,7 +6,6 @@ import kloombaDb
 
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
-mem = memcache.Client()
 
 class UpdateHandler(ProtobufHandler):
     def get(self, table):
@@ -18,7 +17,7 @@ class UpdateHandler(ProtobufHandler):
                 if 'timestamp' in dir(item):
                     item.timestamp = item.timestamp
                 item.put()
-            mem.flush_all()
+            memcache.flush_all()
 
             self.response.headers['Content-Type'] = 'text/plain'
             self.response.out.write("Updated table: %s\nUpdated entitys: %d" % (table, i))

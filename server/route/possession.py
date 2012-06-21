@@ -12,8 +12,6 @@ from message.PossessionLost_pb2 import PossessionLost
 
 __author__ = 'Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com'
 
-mem = memcache.Client()
-
 class PossessionListHandler(ProtobufHandler):
     """
     ancestor: user
@@ -35,10 +33,10 @@ class PossessionListHandler(ProtobufHandler):
             keys = [kloombaDb.Possession.flowerbed.get_value_for_datastore(i) for i in poss]
             flowerbeds = []
             for i in keys:
-                fb = mem.get(str(i))
+                fb = memcache.get(str(i))
                 if not fb:
                     fb = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', i).get()
-                    if fb and not mem.add(str(i), fb):
+                    if fb and not memcache.add(str(i), fb):
                         logging.error('Memcache set failed')
                 if fb:
                     flowerbeds.append(fb)
@@ -87,10 +85,10 @@ class PossessionLostHandler(ProtobufHandler):
             flowerbeds = []
 
             for i in keys:
-                fb = mem.get(str(i))
+                fb = memcache.get(str(i))
                 if not fb:
                     fb = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', i).get()
-                    if fb and not mem.add(str(i), fb):
+                    if fb and not memcache.add(str(i), fb):
                         logging.error('Memcache set failed')
                 if fb:
                     flowerbeds.append(fb)
