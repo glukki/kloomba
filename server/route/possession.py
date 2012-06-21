@@ -1,7 +1,7 @@
 # coding=utf-8
 from google.appengine.api import users
 from google.appengine.ext import db
-from google.appengine.ext.db import Key
+from google.appengine.ext.db import Key, GqlQuery
 import time
 import kloombaDb
 from main import ProtobufHandler, LOST_FLOWERBED_TIMEOUT
@@ -22,22 +22,24 @@ class PossessionListHandler(ProtobufHandler):
 
         user = users.get_current_user()
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
-        possessions = kloombaDb.Possession.all().ancestor(gamer_key).filter('lost =', False).run()
+        possessions = GqlQuery('SELECT * FROM Possession WHERE ANCESTOR IS :1 AND lost = FALSE', gamer_key).run()
         r.timestamp = int(time.time())
         for i in possessions:
             poss.append(i)
 
         if poss:
-            flowerbeds = kloombaDb.Flowerbed.get([i.flowerbed.key() for i in poss])
+            flowerbeds = kloombaDb.Flowerbed.get(
+                [kloombaDb.Possession.flowerbed.get_value_for_datastore(i) for i in poss])
             for (p, f) in zip(poss, flowerbeds):
-                fb = r.possession.add()
-                fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
-                fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
-                fb.flowerbed.id = str(f.key())
-                fb.flowerbed.latitude = int(f.point.lat * 1000000)
-                fb.flowerbed.longitude = int(f.point.lon * 1000000)
-                fb.flowerbed.owner = f.owner_public_id
-                fb.flowerbed.flowers = f.flowers
+                if p and f:
+                    fb = r.possession.add()
+                    fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
+                    fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
+                    fb.flowerbed.id = str(f.key())
+                    fb.flowerbed.latitude = int(f.point.lat * 1000000)
+                    fb.flowerbed.longitude = int(f.point.lon * 1000000)
+                    fb.flowerbed.owner = f.owner_public_id
+                    fb.flowerbed.flowers = f.flowers
 
         if self.request.get('debug', False):
             self.response.out.write(r)
@@ -57,7 +59,7 @@ class PossessionLostHandler(ProtobufHandler):
 
         user = users.get_current_user()
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
-        possessions = kloombaDb.Possession.all().ancestor(gamer_key).filter('lost =', True).run()
+        possessions = GqlQuery('SELECT * FROM Possession WHERE ANCESTOR IS :1 AND lost = TRUE', gamer_key).run()
         r.timestamp = int(time.time())
         for i in possessions:
             if int(time.time()) - int(time.mktime(i.timestamp.timetuple())) > LOST_FLOWERBED_TIMEOUT:
@@ -68,16 +70,18 @@ class PossessionLostHandler(ProtobufHandler):
         deleted = db.delete_async(to_delete)
 
         if poss:
-            flowerbeds = kloombaDb.Flowerbed.get([i.flowerbed.key() for i in poss])
+            flowerbeds = kloombaDb.Flowerbed.get(
+                [kloombaDb.Possession.flowerbed.get_value_for_datastore(i) for i in poss])
             for (p, f) in zip(poss, flowerbeds):
-                fb = r.possession.add()
-                fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
-                fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
-                fb.flowerbed.id = str(f.key())
-                fb.flowerbed.latitude = int(f.point.lat * 1000000)
-                fb.flowerbed.longitude = int(f.point.lon * 1000000)
-                fb.flowerbed.owner = f.owner_public_id
-                fb.flowerbed.flowers = f.flowers
+                if p and f:
+                    fb = r.possession.add()
+                    fb.timestamp = int(time.mktime(p.timestamp.timetuple()))
+                    fb.flowerbed.timestamp = int(time.mktime(f.timestamp.timetuple()))
+                    fb.flowerbed.id = str(f.key())
+                    fb.flowerbed.latitude = int(f.point.lat * 1000000)
+                    fb.flowerbed.longitude = int(f.point.lon * 1000000)
+                    fb.flowerbed.owner = f.owner_public_id
+                    fb.flowerbed.flowers = f.flowers
 
         deleted.get_result()
 

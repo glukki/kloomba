@@ -2,7 +2,7 @@
 import hashlib
 from math import floor
 import time
-from google.appengine.ext.db import Key, GeoPt
+from google.appengine.ext.db import Key, GeoPt, GqlQuery
 from geo import geocell
 from google.appengine.api import users
 from main import ProtobufHandler, SALT, TICK, FLOWERS_PER_TICK, GEO_RESOLUTION
@@ -24,7 +24,7 @@ class FlowerbedExploreHandler(ProtobufHandler):
 
         user = users.get_current_user()
         gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
-        gamer = kloombaDb.Gamer.all().ancestor(gamer_key).get()
+        gamer = GqlQuery('SELECT * FROM Gamer WHERE ANCESTOR IS :1', gamer_key).get()
 
         if self.request.get('lat') and self.request.get('lon'):
             r.timestamp = int(time.time())
@@ -40,7 +40,7 @@ class FlowerbedExploreHandler(ProtobufHandler):
             kind = kloombaDb.Flowerbed.kind()
             #prepare async requests
             for i in tiles:
-                request = kloombaDb.Flowerbed.all().ancestor(Key.from_path(kind, i)).run()
+                request = GqlQuery('SELECT * FROM Flowerbed WHERE ANCESTOR IS :1', Key.from_path(kind, i)).run()
                 requests.append(request)
             for i in requests:
                 for j in i:
@@ -78,7 +78,7 @@ class FlowerbedAddHandler(ProtobufHandler):
             gamer_hash = hashlib.md5(user.user_id() + SALT).hexdigest()
             r.timestamp = int(time.time())
             #get backpack
-            bp_beds = kloombaDb.Backpack.all().ancestor(gamer_key).filter('name =', 'flowerbed').get()
+            bp_beds = GqlQuery('SELECT * FROM Backpack WHERE ANCESTOR IS :1 AND name=:2', gamer_key, 'flowerbed').get()
             if bp_beds.amount:
                 #lower backpack
                 bp_beds.amount -= 1
@@ -97,7 +97,7 @@ class FlowerbedAddHandler(ProtobufHandler):
                 possession.flowerbed = flowerbed
                 possession.put()
 
-                backpack = kloombaDb.Backpack.all().ancestor(gamer_key).run()
+                backpack = GqlQuery('SELECT * FROM Backpack WHERE ANCESTOR IS :1', gamer_key).run()
 
                 #set timestamps
                 r.flowerbed.timestamp = int(time.time())
@@ -139,7 +139,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
         amount = int(self.request.get('amount'))
 
 
-        flowerbed = kloombaDb.Flowerbed.get(fb_id)
+        flowerbed = GqlQuery('SELECT * FROM Flowerbed WHERE ANCESTOR IS :1', fb_id).get()
         ts = time.time()
         if flowerbed:
             fb_flowers = flowerbed.flowers +\
@@ -150,7 +150,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
             user = users.get_current_user()
             gamer_key = Key.from_path(kloombaDb.Gamer.kind(), user.user_id())
             gamer_hash = hashlib.md5(user.user_id() + SALT).hexdigest()
-            bp_flowers = kloombaDb.Backpack.all().ancestor(gamer_key).filter('name =', 'flower').get()
+            bp_flowers = GqlQuery('SELECT * FROM Backpack WHERE ANCESTOR IS :1 AND name=:2', gamer_key, 'flower').get()
 
             #TODO: check if flowerbed is close to user
             if amount < 0: #from
@@ -181,7 +181,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         bp_flowers.put()
                     else: #conquer
                         #set lost
-                        lost = kloombaDb.Possession.all().ancestor(Key.from_path(kloombaDb.Gamer.kind(), flowerbed.owner)).filter('flowerbed =', flowerbed).get()
+                        lost = GqlQuery('SELECT * FROM Possession WHERE ANCESTOR IS :1 AND flowerbed=:2', Key.from_path(kloombaDb.Gamer.kind(), flowerbed.owner), flowerbed).get()
                         lost.lost = True
                         lost.put()
                         #set flowerbed
@@ -193,14 +193,14 @@ class FlowerbedTransferHandler(ProtobufHandler):
                         bp_flowers.amount -= amount
                         bp_flowers.put()
                         #set conquer
-                        possession = kloombaDb.Possession.all().ancestor(gamer_key).filter('flowerbed =', flowerbed).get()
+                        possession = GqlQuery('SELECT * FROM Possession WHERE ANCESTOR IS :1 AND flowerbed=:2', gamer_key, flowerbed).get()
                         if not possession:
                             possession = kloombaDb.Possession(parent=gamer_key)
                             possession.flowerbed = flowerbed
                         possession.lost = False
                         possession.put()
 
-            backpack = kloombaDb.Backpack.all().ancestor(gamer_key)
+            backpack = GqlQuery('SELECT * FROM Backpack WHERE ANCESTOR IS :1', gamer_key).run()
 
             #set timestamps
             r.flowerbed.timestamp = int(time.time())
