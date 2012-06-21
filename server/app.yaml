@@ -4,7 +4,7 @@ runtime: python27
 api_version: 1
 threadsafe: true
 
-default_expiration: "7d"
+default_expiration: "10m"
 
 handlers:
 - url: /(login|flowerbed|possession|bookmark).*
@@ -14,6 +14,9 @@ handlers:
 - url: /favicon\.ico
   static_files: img/favicon.ico
   upload: img/favicon.ico
+
+- url: /img
+  static_dir: img
 
 - url: /.*
   script: main.app
