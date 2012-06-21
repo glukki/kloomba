@@ -15,6 +15,8 @@ class UpdateHandler(ProtobufHandler):
             request = GqlQuery('SELECT * FROM ' + table).run()
             for item in request:
                 i += 1
+                if 'timestamp' in dir(item):
+                    item.timestamp = item.timestamp
                 item.put()
             mem.flush_all()
 
