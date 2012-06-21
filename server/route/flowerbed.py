@@ -148,7 +148,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
         #get from memcache
         flowerbed = memcache.get(fb_id)
         if not flowerbed:
-            flowerbed = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', fb_id).get()
+            flowerbed = GqlQuery('SELECT * FROM Flowerbed WHERE __key__=:1', Key(fb_id)).get()
 
         ts = time.time()
         if flowerbed:
