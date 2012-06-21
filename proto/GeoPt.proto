@@ -1,0 +1,15 @@
+/**
+ * Created with IntelliJ IDEA.
+ * User: Vitaliy (GLuKKi) Meshchaninov glukki.spb.ru@gmail.com
+ * Date: 21.06.12
+ * Time: 16:06
+ * To change this template use File | Settings | File Templates.
+ */
+
+option java_package = "com.kloomba.app.api.protobuf";
+option java_outer_classname = "GeoPtProto";
+
+message GeoPt {
+    optional int32 lat = 1;
+    optional int32 lon = 2;
+}
