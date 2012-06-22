@@ -168,7 +168,7 @@ class FlowerbedTransferHandler(ProtobufHandler):
                     return #not your flowerbed
                 if fb_flowers < amount * -1:
                     return #not enough on flowerbed
-                #ok, now substract
+                #ok, now subtract
                 flowerbed.flowers = fb_flowers + amount
                 flowerbed.put()
                 memcache.set(str(flowerbed.key()), flowerbed)

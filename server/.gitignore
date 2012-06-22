@@ -8,4 +8,4 @@
 *.py[cod]
 
 #Custom
-tpl/
+_tmp/
