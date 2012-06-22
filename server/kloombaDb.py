@@ -32,7 +32,7 @@ class FlowerbedLog(db.Model):
     owner = db.StringProperty()
     attackPlants = db.IntegerProperty(indexed=False)
     defensePlants = db.IntegerProperty(indexed=False)
-    timestamp = db.DateTimeProperty(auto_now_add=True)
+    timestamp = db.DateTimeProperty(auto_now=True)
 
 #store users current and lost flowerbeds
 #ancestor: user_id

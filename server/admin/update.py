@@ -15,7 +15,9 @@ class UpdateHandler(ProtobufHandler):
             for item in request:
                 i += 1
                 if 'timestamp' in dir(item):
-                    item.timestamp = item.timestamp
+                    kloombaDb.__dict__[table].__dict__['timestamp'].__dict__['auto_now'] = False
+                if 'lastActiveTimestamp' in dir(item):
+                    kloombaDb.__dict__[table].__dict__['lastActiveTimestamp'].__dict__['auto_now'] = False
                 item.put()
             memcache.flush_all()
 
